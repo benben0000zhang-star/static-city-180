@@ -1,0 +1,95 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>寂静之城 · 四个静止瞬间</title><style>*{box-sizing:border-box}body{margin:0;background:#10191d;color:#f4ead7;font-family:Georgia,'Microsoft YaHei',serif;overflow:hidden}button{font:inherit;color:inherit;background:#142329da;border:1px solid #d0ba8655;padding:12px 19px;cursor:pointer;transition:background .2s}button:hover,button:focus-visible{background:#746346;outline:1px solid #e7d3a2}button:disabled{opacity:.4;cursor:default}#world,.shade{position:fixed;inset:0}#world{touch-action:none;cursor:grab}#world:active{cursor:grabbing}canvas{display:block}.shade{pointer-events:none;background:linear-gradient(#07101588,transparent 22%,transparent 65%,#071015a8)}header{position:fixed;top:26px;left:32px;right:32px;display:flex;gap:14px;align-items:center;pointer-events:none}header>*{pointer-events:auto}.brand{font-size:25px;letter-spacing:5px;margin-right:auto}.brand small{display:block;font:10px 'Microsoft YaHei';letter-spacing:3px;margin-top:9px}#position{font:12px 'Microsoft YaHei';margin-right:16px}#places{position:fixed;left:28px;top:38%;display:grid;gap:8px}#places button{text-align:left;font-size:12px}#places button.done::after{content:' · 已交谈';opacity:.6}.hotspot{position:fixed;transform:translate(-50%,-50%);border-radius:50%;width:46px;height:46px;padding:0;background:#132328ac;box-shadow:0 0 0 7px #f7ebc419;font-size:13px}.hotspot span{position:absolute;top:54px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:7px;background:#102127cc;font-size:12px}footer{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);text-align:center;width:560px;font:12px 'Microsoft YaHei'}#hint{display:block;margin-bottom:12px;color:#e0d8c7}footer button{font-size:12px;padding:9px 17px}.compass{height:1px;background:#dac39365;margin:17px auto 9px;width:200px;position:relative}#needle{position:absolute;top:-3px;width:6px;height:6px;background:#eddbac}.hidden{display:none!important}#speech{position:fixed;left:50%;bottom:150px;transform:translateX(-50%);width:min(650px,70vw);padding:22px 28px;background:#0a171ef0;border-top:1px solid #ddc49188;box-shadow:0 15px 80px #0005}#speaker{font-size:10px;letter-spacing:4px;color:#cbb57f}#line{font-size:19px;line-height:1.8;white-space:pre-line;margin:13px 0 20px}#options{display:flex;flex-wrap:wrap;gap:8px}#options button{font-size:13px}.overlay{position:fixed;inset:0;background:#08141ba8;backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center}.card{width:min(590px,90vw);padding:40px}.card>small{display:block;letter-spacing:3px;font:12px 'Microsoft YaHei';color:#d6c49e}h1{font-size:56px;font-weight:normal;line-height:1.2;letter-spacing:4px;margin:24px 0}p{line-height:1.9}.muted{font:13px/1.9 'Microsoft YaHei';color:#c6c9c6}.card button{margin:15px 8px 16px 0}#record{font-size:12px;line-height:1.8;color:#cbbd9e}@media(max-height:650px){header{top:14px}footer{bottom:12px}#speech{bottom:115px;padding:12px 22px}#line{margin:6px 0 10px;font-size:16px}h1{font-size:42px}.card{padding:20px}}@media(max-width:700px){#places{left:10px;top:24%}header{left:16px;right:16px}#position{display:none}footer{width:95%}#speech{width:92vw}h1{font-size:42px}}
+
+#depthLayers{position:fixed;inset:0;overflow:hidden;opacity:0;pointer-events:none;background:#121b20;will-change:opacity}.depth-stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);overflow:hidden}.depth-plane{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform,opacity}.depth-plane img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}.depth-final{opacity:0}#replay{border-color:#d4b77d}#places button.active{background:#6d603ad9;border-color:#e5cf9f}button:disabled{cursor:wait}#speech{bottom:145px}</style></head><body>
+<main id="world" aria-label="前方180度街道，按住鼠标拖动观察"></main><section id="depthLayers" aria-label="独立近景" aria-hidden="true"></section><div class="shade"></div>
+<header><div class="brand">寂静之城<small>第一章 / 四个静止瞬间</small></div><div id="position">街口 · 远景</div><button id="help">操作说明</button><button id="full">全屏</button></header>
+<nav id="places" aria-label="前往观察点"><button data-go="coffee">01 咖啡</button><button data-go="bus">02 公交站</button><button data-go="smoke">03 长椅与烟圈</button><button data-go="guard">04 银行入口</button></nav>
+<button class="hotspot" id="coffee">01<span>靠近咖啡</span></button><button class="hotspot" id="bus">02<span>靠近公交站</span></button><button class="hotspot" id="smoke">03<span>靠近烟圈</span></button><button class="hotspot" id="guard">04<span>靠近保安</span></button>
+<section id="speech" class="hidden" aria-live="polite"><small id="speaker">我</small><p id="line"></p><div id="options"></div></section>
+<footer><span id="hint">按住鼠标左右拖动 · A / D 转头 · E 交谈</span><button id="talk" disabled>靠近后交谈</button><button id="replay" class="hidden">重播移步镜头</button><button id="back">退回街口</button><div class="compass"><i id="needle"></i></div><small>左侧 — 前方 180° — 右侧</small></footer>
+<section id="intro" class="overlay"><div class="card"><small>第一人称剧情试玩 · 电脑端</small><h1>那个人<br>没有骂我。</h1><p>咖啡停在半空。<br>整条街，没人把下一句话说完。</p><p class="muted">按住鼠标左右拖动，观察前方半圈街道。<br>四个观察点，四幅独立近景。<br>点击标记靠近；E交谈，数字键选择；Esc返回。</p><button id="start" disabled>正在载入街道…</button><small id="status">画面加载中</small></div></section>
+<section id="end" class="overlay hidden"><div class="card"><small>开场试玩结束</small><h1>我问过了。</h1><p>你从保安的手臂旁边走过去。<br>没有人阻止。</p><p class="muted">下一段：请您评价本次服务。<br>本版到银行门口为止。</p><div id="record"></div><button id="return">回街道继续看</button><button id="restart">从头开始</button></div></section>
+<script type="module">let layerActive=false,layersReady=false,layerMotion=null,layerNode=null;
+const layerSpecs={
+ coffee:{ratio:1672/941,origin:'55% 55%',bg:1.62,align:[0,0,1,1]},
+ bus:{ratio:2,origin:'66% 58%',bg:1.46,align:[.355,.315,.49,.57]},
+ smoke:{ratio:1672/941,origin:'28% 55%',bg:1.46,align:[0,.21,.88,.79]},
+ guard:{ratio:1672/941,origin:'36% 48%',bg:1.46,align:[0,0,1,1]}
+};
+const layerStages={};
+function layerSize(){for(const [id,s]of Object.entries(layerSpecs)){const el=layerStages[id]?.stage;if(!el)continue;const w=Math.max(innerWidth,innerHeight*s.ratio);el.style.width=w+'px';el.style.height=w/s.ratio+'px';}}
+function syncControls(){document.querySelectorAll('#places button').forEach(b=>{b.disabled=!!travel;b.classList.toggle('active',b.dataset.go===point);});$('back').disabled=!!travel;$('replay').disabled=!!travel;}
+queueMicrotask(()=>{
+ const promises=[];let prepared=0;
+ for(const [id,s]of Object.entries(layerSpecs)){
+  const stage=document.createElement('div');stage.className='depth-stage hidden';stage.dataset.node=id;
+  const parts={stage};
+  for(const [role,file]of [['back','background'],['front','foreground'],['final','near']]){
+   const plane=document.createElement('div');plane.className='depth-plane depth-'+role;plane.style.transformOrigin=s.origin;
+   const img=new Image();img.alt=role==='final'?spots[id].name+' · 独立近景':'';img.src=`street-v3-${id}-${file}.png`;img.decoding='async';
+   if(role==='front'){const [x,y,w,h]=s.align;img.style.left=x*100+'%';img.style.top=y*100+'%';img.style.width=w*100+'%';img.style.height=h*100+'%';}
+   plane.append(img);stage.append(plane);parts[role]=plane;parts[role+'Image']=img;promises.push(img.decode().then(()=>{prepared++;$('status').textContent='正在准备近景 '+prepared+' / 12';}));
+  }layerStages[id]=parts;$('depthLayers').append(stage);
+ }layerSize();addEventListener('resize',layerSize);
+ Promise.all(promises).then(()=>{layersReady=true;if(loaded){$('start').disabled=false;$('status').textContent='四个观察点 · 场景已就绪';}}).catch(()=>{$('start').disabled=true;$('status').textContent='部分近景素材未载入，请刷新后重试。';});
+ $('replay').onclick=()=>{if(dialog||travel||!active||!layerNode)return;beginExit(layerNode,true);};
+});
+function smooth(a,b,v){let x=clamp((v-a)/(b-a),0,1);return x*x*(3-2*x);}
+function layerVisual(id,q){const s=layerSpecs[id],a=layerStages[id],e=smooth(0,1,q);a.back.style.transform=`scale(${s.bg-(s.bg-1.12)*e})`;a.front.style.transform=`scale(${1+.12*e})`;a.final.style.transform='scale(1.12)';a.final.style.opacity=smooth(.80,1,q);$('depthLayers').dataset.phase=q<.80?'depth-travel':'settling';}
+function beginNear(id){keys.clear();drag=null;layerActive=true;layerNode=id;for(const [k,a]of Object.entries(layerStages))a.stage.classList.toggle('hidden',k!==id);layerVisual(id,0);const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;layerMotion={mode:'enter',id,start:performance.now(),duration:reduced?250:2400,from:{...view},reduced};travel={layer:true};$('depthLayers').style.opacity='0';$('depthLayers').setAttribute('aria-hidden','false');$('position').textContent='正在靠近 · '+spots[id].name;$('talk').disabled=true;$('replay').classList.add('hidden');$('hint').textContent='前景靠近，街道向远处拉开…';syncControls();}
+function beginExit(target,replay=false){keys.clear();drag=null;layerMotion={mode:'exit',target,replay,start:performance.now(),duration:matchMedia('(prefers-reduced-motion: reduce)').matches?120:450};travel={layer:true};$('talk').disabled=true;syncControls();}
+function move(id){if(!active||!loaded||!layersReady||travel||dialog)return;if(layerActive){beginExit(id);return;}if(layerSpecs[id])beginNear(id);else{moveBase(id);syncControls();}}
+function step(now){
+ if(!layerMotion){stepBase(now);syncControls();return;}
+ const m=layerMotion,p=clamp((now-m.start)/m.duration,0,1);
+ if(m.mode==='exit'){
+  $('depthLayers').style.opacity=1-smooth(0,1,p);
+  if(p===1){layerActive=false;layerMotion=null;travel=null;$('depthLayers').setAttribute('aria-hidden','true');$('replay').classList.add('hidden');if(layerSpecs[m.target])beginNear(m.target);else{moveBase(m.target);syncControls();}}return;
+ }
+ const t=smooth(0,.3,p);view.yaw=m.from.yaw+(spots[m.id].yaw-m.from.yaw)*t;view.pitch=m.from.pitch+(spots[m.id].pitch-m.from.pitch)*t;view.fov=m.from.fov+(44-m.from.fov)*t;
+ $('depthLayers').style.opacity=smooth(.16,.36,p);layerVisual(m.id,m.reduced?1:clamp((p-.22)/.78,0,1));
+ if(p===1){point=m.id;layerMotion=null;travel=null;layerStages[m.id].final.style.opacity='1';$('depthLayers').style.opacity='1';$('depthLayers').dataset.phase='near';$('depthLayers').dataset.node=m.id;$('position').textContent=spots[m.id].name+' · 独立近景';$('talk').disabled=false;$('talk').textContent='E · '+(m.id==='guard'?'询问保安':'说句话');$('replay').classList.remove('hidden');$('hint').textContent='独立近景 · E交谈 · 重播移步 / 退回180°街道';syncControls();}
+}
+
+import * as THREE from './street-v3-three.js';
+import {clamp,vfov,constrain,direction,project} from './street-v3-math.mjs';
+const $=id=>document.getElementById(id),host=$('world');let aspect=innerWidth/innerHeight;
+let view={yaw:0,pitch:-.06,fov:vfov(aspect)},loaded=false,active=false,travel=null,point='wide',drag=null,last=0,dialog=false;
+const keys=new Set(),visited=new Set();let choices={};
+const spots={smoke:{...direction(.16,.60),name:'长椅与烟圈'},coffee:{...direction(.32,.54),name:'悬停的咖啡'},bus:{...direction(.07,.56),name:'追公交的人'},guard:{...direction(.875,.52),name:'银行保安'}};
+let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power'});}catch{$('start').textContent='浏览器暂不支持全景';$('status').textContent='请在新版 Safari、Chrome 或 Edge 打开。';throw Error('WebGL unavailable');}
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;host.append(renderer.domElement);
+const uniforms={map:{value:null},aspect:{value:aspect},yaw:{value:0},pitch:{value:0},tanFov:{value:1}},scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+const material=new THREE.ShaderMaterial({uniforms,vertexShader:'varying vec2 screenUv;void main(){screenUv=uv;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:`precision highp float;varying vec2 screenUv;uniform sampler2D map;uniform float aspect,yaw,pitch,tanFov;
+void main(){vec2 xy=screenUv*2.-1.;vec3 r=normalize(vec3(xy.x*aspect*tanFov,xy.y*tanFov,-1.));float cp=cos(pitch),sp=sin(pitch);r=vec3(r.x,cp*r.y-sp*r.z,sp*r.y+cp*r.z);float cy=cos(yaw),sy=sin(yaw);r=vec3(cy*r.x-sy*r.z,r.y,sy*r.x+cy*r.z);vec2 uv=vec2(.5+atan(r.x,-r.z)/3.14159265359,.5+asin(clamp(r.y,-1.,1.))/1.57079632679);gl_FragColor=texture2D(map,clamp(uv,vec2(.001),vec2(.999)));
+#include <colorspace_fragment>
+}`});scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),material));
+new THREE.TextureLoader().load('street-v3-front.png',tex=>{tex.colorSpace=THREE.SRGBColorSpace;tex.minFilter=THREE.LinearFilter;tex.generateMipmaps=false;uniforms.map.value=tex;loaded=true;$('start').disabled=!layersReady;$('start').textContent='进入街道 →';$('status').textContent=layersReady?'四个观察点 · 场景已就绪':'正在准备四个观察点…';},undefined,()=>{$('status').textContent='画面加载失败，请刷新重试。';});
+function say(text,options,speaker='我'){dialog=true;keys.clear();drag=null;$('speech').classList.remove('hidden');$('line').textContent=text;$('speaker').textContent=speaker;$('options').replaceChildren();options.forEach(([label,fn],i)=>{let b=document.createElement('button');b.textContent=(i+1)+'　'+label;b.onclick=fn;$('options').append(b);});}
+function close(){dialog=false;$('speech').classList.add('hidden');}
+function sequence(lines,done){let i=0;function next(){if(i===lines.length){close();done?.();return;}say(lines[i++],[['继续',next]]);}next();}
+function finish(id,text,label){choices[id]=label;visited.add(id);document.querySelector(`[data-go="${id}"]`).classList.add('done');sequence(text,()=>{if(id==='guard')entry();});}
+function converse(){if(!active||travel||dialog||point==='wide')return;const id=point;if(id==='coffee')say('纸杯歪在半空。咖啡停在两个人之间。',[['喂，你没事吧？',()=>finish(id,['“你听得见吗？”\n\n没有回应。','“……行。”'],'询问行人')],['接着骂啊。',()=>finish(id,['“你刚才不是挺有话说的吗？”\n\n没有回应。','“算你有素质。”'],'调侃行人')],['不说话，离开。',()=>{choices[id]='没有打扰行人';close();move('wide');}]],'眼前');
+if(id==='smoke')say('烟圈停在他的嘴边。像一句始终没说完的话。',[
+ ['你也不着急了？',()=>finish(id,['“你也不着急了？”','他没有回答。\n\n“行。那我也待一会儿。”'],'问他着不着急')],
+ ['这口烟，够抽一阵了。',()=>finish(id,['“这口烟，够抽一阵了。”','“就是不知道，还算不算你的。”'],'看着烟圈打趣')],
+ ['在旁边待一会儿。',()=>finish(id,['你站在长椅旁。\n\n没有人催你走，也没有人给你让座。','“我站着就行。”'],'陪他停留')],
+ ['不打扰，离开。',()=>{choices.smoke='没有打扰';close();move('wide');}]],'眼前');
+if(id==='bus')say('他的手伸向车门。只差一步。',[['差一点。',()=>finish(id,['“就差这一步。”','“看着比差一公里还难受。”'],'差一点')],['别追了。',()=>finish(id,['“今天迟到的人，应该不少。”'],'别追了')],['离开。',()=>{close();move('wide');}]],'眼前');
+if(id==='guard')say('保安的掌心朝着你。他停在阻拦的姿势里。',[['我能进去吗？',()=>finish(id,['“我能进去吗？”\n\n他没有回答。','“我问过了。”'],'问过保安')],['从手臂旁边绕过去。',()=>{choices.guard='直接经过';sequence(['“原来就这么过去了。”'],endScene);}],['先回街道看看。',()=>{close();move('wide');}]],'眼前');}
+function entry(){say('门就在他的身后。',[['从旁边走进银行。',()=>{close();endScene();}],['还想看看街道。',()=>{close();move('wide');}]],'');}
+function endScene(){close();move('entry');}
+function showEnd(){$('position').textContent='银行门口';$('end').querySelector('h1').textContent=choices.guard==='直接经过'?'原来就这么过去了。':'我问过了。';active=false;$('end').classList.remove('hidden');$('record').textContent=['咖啡：'+(choices.coffee||'经过，没有交谈'),'公交站：'+(choices.bus||'没有停留'),'长椅：'+(choices.smoke||'没有停留'),'保安：'+(choices.guard||'从旁边经过')].join('　／　');}
+function moveBase(id){if(!active||!loaded||travel||dialog)return;keys.clear();drag=null;const goal=id==='wide'?{yaw:0,pitch:-.06}:id==='entry'?direction(.93,.48):spots[id];const near=id!=='wide';travel={start:performance.now(),from:{...view},to:{...goal,fov:near?Math.min(36,vfov(aspect,true)):vfov(aspect)},id,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?220:1000};$('position').textContent='正在移步…';$('talk').disabled=true;}
+function stepBase(now){if(!travel)return;const t=travel,p=clamp((now-t.start)/t.duration,0,1),e=p*p*(3-2*p);view.yaw=t.from.yaw+(t.to.yaw-t.from.yaw)*e;view.pitch=t.from.pitch+(t.to.pitch-t.from.pitch)*e;view.fov=t.from.fov+(t.to.fov-t.from.fov)*e;renderer.domElement.style.filter=t.duration>300?`blur(${Math.sin(p*Math.PI)*1.5}px)`:'none';if(p===1){point=t.id;travel=null;renderer.domElement.style.filter='none';if(point==='entry'){showEnd();return;}$('position').textContent=point==='wide'?'街口 · 远景':spots[point].name+' · 近处';$('talk').disabled=point==='wide';$('talk').textContent=point==='wide'?'靠近后交谈':'E · '+(point==='guard'?'询问保安':'说句话');$('hint').textContent=point==='wide'?'按住鼠标左右拖动 · A / D 转头 · 点击标记靠近':'仍可左右转头 · E 交谈 · 退回街口继续探索';}}
+function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/1000,.05);last=now;if(active&&!layerActive&&!travel&&!dialog){if(keys.has('KeyA')||keys.has('ArrowLeft'))view.yaw-=dt*.75;if(keys.has('KeyD')||keys.has('ArrowRight'))view.yaw+=dt*.75;}step(now);constrain(view,aspect);uniforms.yaw.value=view.yaw;uniforms.pitch.value=view.pitch;uniforms.tanFov.value=Math.tan(view.fov*Math.PI/360);for(const [id,s]of Object.entries(spots)){const el=$(id),pos=project(s,view,innerWidth,innerHeight),visible=active&&!layerActive&&!dialog&&!travel&&point!==id&&pos.visible&&pos.y>110&&pos.y<innerHeight-150;el.classList.toggle('hidden',!visible);if(visible){el.style.left=pos.x+'px';el.style.top=pos.y+'px';}}$('needle').style.left=(view.yaw/Math.PI+.5)*100+'%';if(uniforms.map.value)renderer.render(scene,camera);}
+host.onpointerdown=e=>{if(!active||layerActive||dialog||travel)return;drag={x:e.clientX};host.setPointerCapture(e.pointerId);};host.onpointermove=e=>{if(!drag||travel)return;view.yaw-=(e.clientX-drag.x)*.003;drag={x:e.clientX};};host.onpointerup=host.onpointercancel=()=>drag=null;
+addEventListener('keydown',e=>{if(!active)return;if(dialog){if(/^Digit[1-4]$/.test(e.code)){e.preventDefault();$('options').children[Number(e.code.slice(-1))-1]?.click();}return;}if(['KeyA','KeyD','ArrowLeft','ArrowRight'].includes(e.code)){e.preventDefault();keys.add(e.code);}if(e.code==='KeyE')converse();if(e.code==='Escape'&&!travel)move('wide');});addEventListener('keyup',e=>keys.delete(e.code));addEventListener('blur',()=>{keys.clear();drag=null;});
+addEventListener('resize',()=>{aspect=innerWidth/innerHeight;renderer.setSize(innerWidth,innerHeight);uniforms.aspect.value=aspect;view.fov=point==='wide'?vfov(aspect):Math.min(36,vfov(aspect,true));constrain(view,aspect);});
+for(const id of Object.keys(spots)){$(id).onclick=()=>move(id);document.querySelector(`[data-go="${id}"]`).onclick=()=>move(id);}
+$('back').onclick=()=>move('wide');$('talk').onclick=converse;
+$('start').onclick=()=>{if(!loaded||!layersReady)return;active=true;$('intro').classList.add('hidden');if(!$('start').dataset.begun){$('start').dataset.begun='yes';sequence(['“那天，时间停止了。”','“至少，我后来一直这么说。”','“当时我只是觉得——这个人怎么还没骂完。”']);}};
+$('help').onclick=()=>{if(travel||dialog)return;active=false;keys.clear();$('intro').classList.remove('hidden');$('start').textContent='继续体验 →';};
+$('full').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{}};
+$('return').onclick=()=>{$('end').classList.add('hidden');active=true;move('wide');};$('restart').onclick=()=>{location.reload();};requestAnimationFrame(frame);
+</script></body></html>
